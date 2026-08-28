@@ -1,2 +1,2 @@
-qiskit
-qiskit-ibm-runtime
+qiskit>=1.4,<3
+qiskit-ibm-runtime>=0.36,<1

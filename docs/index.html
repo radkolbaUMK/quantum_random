@@ -2,31 +2,69 @@
 <html lang="pl">
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="description" content="Quantum Random Generator">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Losowanie liczb i osób z wykorzystaniem losowości kwantowej IBM Quantum">
+    <meta name="theme-color" content="#07111f">
     <title>Quantum Random Generator</title>
     <link rel="manifest" href="site.webmanifest">
     <link rel="icon" href="favicon.svg" type="image/svg+xml">
     <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
-    <div class="container">
-        <h1>Quantum Random Number Generator</h1>
-        <h3>Zakres</h3>
-        <div class="range-container">
-            <label for="minValue">Od:</label>
-            <input id="minValue" type="number" value="1">
-            <label for="maxValue">Do:</label>
-            <input id="maxValue" type="number" value="100">
-        </div>
-        <h3>Uczestnicy</h3>
-        <textarea id="participants" rows="10" placeholder="Jedna osoba w linii"></textarea>
-        <div id="result">?</div>
-        <button id="drawBtn">Losuj liczbę</button>
-        <button id="winnerBtn">Losuj zwycięzcę</button>
-        <div id="details"></div>
+    <div class="app-shell">
+        <header class="app-header">
+            <a class="brand" href="./" aria-label="Quantum Random Generator">
+                <span class="brand-icon" aria-hidden="true">⚛</span>
+                <span><strong>Quantum Random</strong><small>Losowość z IBM Quantum</small></span>
+            </a>
+            <div id="status" class="status status-loading" role="status" aria-live="polite">
+                <span class="status-dot" aria-hidden="true"></span><span class="status-text">Ładowanie…</span>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <section class="hero">
+                <p class="eyebrow">Generator losowości kwantowej</p>
+                <h1>Wybierz wynik,<br><span class="gradient-text">któremu możesz zaufać.</span></h1>
+                <p class="hero-description">Każdy wynik pochodzi z pomiaru obwodu kwantowego uruchomionego na sprzęcie IBM Quantum.</p>
+            </section>
+
+            <section class="workspace" aria-label="Generator">
+                <nav class="tabs" aria-label="Typ losowania">
+                    <button class="tab active" data-tab="numbers" type="button">Liczby</button>
+                    <button class="tab" data-tab="people" type="button">Osoby</button>
+                </nav>
+                <div class="workspace-grid">
+                    <div class="controls-card">
+                        <div id="numbersPanel" class="tab-panel active">
+                            <div class="section-heading"><div><p class="section-label">Tryb 01</p><h2>Losowanie liczby</h2></div><span class="section-icon" aria-hidden="true">#</span></div>
+                            <div class="range-grid">
+                                <div class="form-field"><label for="minValue">Od</label><input id="minValue" type="number" value="1" step="1"></div>
+                                <div class="form-field"><label for="maxValue">Do</label><input id="maxValue" type="number" value="100" step="1"></div>
+                            </div>
+                            <button id="drawBtn" class="primary-button" type="button"><span>Losuj liczbę</span><span aria-hidden="true">→</span></button>
+                        </div>
+                        <div id="peoplePanel" class="tab-panel">
+                            <div class="section-heading"><div><p class="section-label">Tryb 02</p><h2>Losowanie osoby</h2></div><span class="section-icon" aria-hidden="true">◎</span></div>
+                            <div class="form-field"><label for="participants">Uczestnicy <span>(jedna osoba w wierszu)</span></label><textarea id="participants" rows="7" placeholder="Jan Kowalski&#10;Anna Nowak&#10;Piotr Wiśniewski"></textarea></div>
+                            <label class="checkbox-field"><input id="removeWinner" type="checkbox" checked> Usuń zwycięzcę po losowaniu</label>
+                            <button id="winnerBtn" class="primary-button" type="button"><span>Losuj zwycięzcę</span><span aria-hidden="true">→</span></button>
+                        </div>
+                    </div>
+                    <div class="result-card">
+                        <p class="result-label">Wynik</p><div id="result" class="result-value" aria-live="polite">?</div><p id="resultMeta" class="result-meta">Gotowy do losowania</p>
+                        <div class="pool-progress"><div class="progress-header"><span>Pozostała pula</span><span id="poolInfo">Ładowanie…</span></div><div class="progress-track"><div id="progressValue" class="progress-value"></div></div></div>
+                    </div>
+                </div>
+            </section>
+            <section class="history-card">
+                <div class="history-header"><div><p class="section-label">Sesja</p><h2>Historia losowań</h2></div><button id="clearHistory" class="secondary-button" type="button">Wyczyść</button></div>
+                <ul id="history" class="history-list"></ul>
+            </section>
+            <section class="source-card"><div><p class="section-label">Źródło</p><h2>Transparentna losowość</h2></div><dl class="source-details"><div><dt>Dostawca</dt><dd id="details">Ładowanie…</dd></div><div><dt>Przechowywanie</dt><dd>Lokalnie w przeglądarce</dd></div><div><dt>Bezpieczeństwo</dt><dd>HTTPS + GitHub Pages</dd></div></dl></section>
+        </main>
+        <footer class="app-footer"><p>Quantum Random Generator</p><p>Wyniki są przeznaczone do celów rozrywkowych.</p></footer>
     </div>
-    <script src="app.js"></script>
+    <script src="app.js" defer></script>
 </body>
 </html>

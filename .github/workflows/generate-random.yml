@@ -7,20 +7,29 @@ on:
 
 permissions:
   contents: write
+
+concurrency:
+  group: quantum-random-generation
+  cancel-in-progress: false
+
 jobs:
   generate:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
 
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+          cache: pip
+          cache-dependency-path: generator/requirements.txt
 
       - run: |
-          pip install -r generator/requirements.txt
+          python -m pip install --upgrade pip
+          python -m pip install -r generator/requirements.txt
       - run: |
-          python generator/generate_random.py
+          python generator/generate_random.py --output docs/random.json
         env:
           IBM_TOKEN: ${{ secrets.IBM_TOKEN }}
           IBM_INSTANCE: ${{ secrets.IBM_INSTANCE }}
