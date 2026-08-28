@@ -5,6 +5,11 @@ on:
   push:
     branches:
       - main
+  workflow_run:
+    workflows:
+      - Generate Quantum Numbers
+    types:
+      - completed
 
 permissions:
   pages: write
