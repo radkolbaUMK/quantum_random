@@ -27,6 +27,15 @@ async function loadPool() {
     }
 }
 
+function mapQuantumNumber(value) {
+    const min = parseInt(document.getElementById("minValue").value);
+    const max = parseInt(document.getElementById("maxValue").value);
+    if (max <= min) {
+        return "Błędny zakres";
+    }
+    return (value % (max - min + 1)) + min;
+}
+
 function getQuantumNumber() {
     if (quantumPool.length === 0) {
         return "Uruchom workflow, aby wygenerować więcej liczb.";
@@ -44,9 +53,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     document
         .getElementById("drawBtn")
         .addEventListener("click", () => {
-            console.log("Presenting quantum number");
-            document
-                .getElementById("result")
-                .textContent = getQuantumNumber();
+            const quantum = getQuantumNumber();
+            if (typeof quantum !== "number") {
+                document.getElementById("result").textContent = quantum;
+                return;
+            }
+            const result = mapQuantumNumber(quantum);
+
+            document.getElementById("result").textContent = result;
         });
 });
