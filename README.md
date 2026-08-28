@@ -42,5 +42,13 @@ The scheduled workflow requires the repository secrets `IBM_TOKEN` and
 `IBM_INSTANCE`. GitHub Pages must be configured to use GitHub Actions as its
 build and deployment source.
 
-The published pool is a finite cache. When it is exhausted, run the generation
-workflow again to publish a fresh pool.
+The published pool contains 1,000 values by default and is a finite cache.
+Each browser session shuffles its own local copy with the browser's
+cryptographically secure random source, so users do not receive the same
+sequence. When the pool is exhausted, run the generation workflow again to
+publish a fresh pool.
+
+The quantum values are uniformly sampled without modulo bias for ranges of up
+to 256 values. This is still quantum-sourced randomness; the per-user shuffle
+only changes the order in which the already-generated quantum values are
+consumed.

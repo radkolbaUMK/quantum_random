@@ -28,11 +28,13 @@ function readSavedState() {
         if (saved?.generatedAt === state.generatedAt && Array.isArray(saved.pool)) {
             state.pool = saved.pool.filter(Number.isInteger);
             state.history = Array.isArray(saved.history) ? saved.history.slice(0, MAX_HISTORY_ITEMS) : [];
+            return true;
         }
     } catch {
         console.warn("Ignoring invalid saved application state.");
         localStorage.removeItem(STORAGE_KEY);
     }
+    return false;
 }
 
 function saveState() {
@@ -41,6 +43,25 @@ function saveState() {
         pool: state.pool,
         history: state.history,
     }));
+}
+
+function shuffle(values) {
+    const shuffled = [...values];
+    for (let index = shuffled.length - 1; index > 0; index -= 1) {
+        const swapIndex = randomUintBelow(index + 1);
+        [shuffled[index], shuffled[swapIndex]] = [shuffled[swapIndex], shuffled[index]];
+    }
+    return shuffled;
+}
+
+function randomUintBelow(limit) {
+    const maximum = 2 ** 32;
+    const acceptedMaximum = maximum - (maximum % limit);
+    const randomValue = new Uint32Array(1);
+    do {
+        crypto.getRandomValues(randomValue);
+    } while (randomValue[0] >= acceptedMaximum);
+    return randomValue[0] % limit;
 }
 
 function updateView() {
@@ -86,22 +107,22 @@ async function loadPool() {
         backend: data.backend || "Nieznany backend",
         pool_size: data.pool_size || data.numbers.length,
     };
-    state.pool = [...data.numbers];
-    readSavedState();
+    if (!readSavedState()) state.pool = shuffle(data.numbers);
     saveState();
     setStatus("Źródło gotowe", "ready");
     updateView();
 }
 
-function takeValue() {
-    if (!state.pool.length) {
-        showResult("Brak liczb", "Uruchom workflow, aby wygenerować nową pulę.");
-        return null;
+function takeUniformIndex(limit) {
+    if (!Number.isSafeInteger(limit) || limit < 1 || limit > 256) {
+        throw new Error("Losowanie obsługuje zakresy od 1 do 256 wartości.");
     }
-    const value = state.pool.pop();
-    saveState();
-    updateView();
-    return value;
+    const acceptedLimit = Math.floor(256 / limit) * limit;
+    while (state.pool.length) {
+        const value = state.pool.pop();
+        if (value < acceptedLimit) return value % limit;
+    }
+    return null;
 }
 
 function recordHistory(kind, value) {
@@ -124,9 +145,15 @@ function drawNumber() {
         showResult("Błędny zakres", "Podaj całkowite wartości, gdzie Od jest mniejsze lub równe Do.");
         return;
     }
-    const value = takeValue();
-    if (value !== null) {
-        const result = min + (value % range);
+    let index;
+    try {
+        index = takeUniformIndex(range);
+    } catch (error) {
+        showResult("Błędny zakres", error.message);
+        return;
+    }
+    if (index !== null) {
+        const result = min + index;
         recordHistory("Liczba", result);
         showResult(result, "Wylosowano ze źródła kwantowego");
     }
@@ -138,9 +165,11 @@ function drawWinner() {
         showResult("Brak uczestników", "Dodaj co najmniej jedną osobę.");
         return;
     }
-    const value = takeValue();
-    if (value === null) return;
-    const index = value % participants.length;
+    const index = takeUniformIndex(participants.length);
+    if (index === null) {
+        showResult("Brak liczb", "Uruchom workflow, aby wygenerować nową pulę.");
+        return;
+    }
     const winner = participants[index];
     if ($("removeWinner").checked) {
         participants.splice(index, 1);

@@ -14,7 +14,7 @@ from qiskit import QuantumCircuit
 from qiskit.transpiler import generate_preset_pass_manager
 from qiskit_ibm_runtime import QiskitRuntimeService, SamplerV2
 
-DEFAULT_POOL_SIZE = 100
+DEFAULT_POOL_SIZE = 1_000
 DEFAULT_OUTPUT = Path(__file__).resolve().parents[1] / "docs" / "random.json"
 
 
