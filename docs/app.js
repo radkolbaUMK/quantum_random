@@ -1,52 +1,37 @@
 let quantumPool = [];
 
 async function loadPool() {
-
     const response = await fetch(
         "random.json?" + Date.now()
     );
-
     const data = await response.json();
-
-    quantumPool = data.numbers;
-
-    document
-        .getElementById("details")
-        .innerHTML =
-        `
-        Backend: ${data.backend}<br>
-        Wygenerowano: ${data.generated_at}<br>
-        Liczb w puli: ${data.pool_size}
-        `;
+    const savedTimestamp =
+        localStorage.getItem("generated_at");
+    if (savedTimestamp === data.generated_at) {
+        const savedPool =
+            localStorage.getItem("quantumPool");
+        quantumPool = savedPool ? JSON.parse(savedPool) : [...data.numbers];
+    } else {
+        quantumPool = [...data.numbers];
+        localStorage.setItem(
+            "generated_at",
+            data.generated_at
+        );
+        localStorage.setItem(
+            "quantumPool",
+            JSON.stringify(quantumPool)
+        );
+    }
 }
 
 function getQuantumNumber() {
-
     if (quantumPool.length === 0) {
-
-        return "Brak danych";
+        return "Uruchom workflow, aby wygenerować więcej liczb.";
     }
-
-    const randomIndex =
-        crypto.getRandomValues(
-            new Uint32Array(1)
-        )[0] %
-        quantumPool.length;
-
-    return quantumPool[randomIndex];
-}
-
-document
-    .getElementById("drawBtn")
-    .addEventListener(
-        "click",
-        () => {
-
-            document
-                .getElementById("result")
-                .textContent =
-                getQuantumNumber();
-        }
+    const value = quantumPool.pop();
+    localStorage.setItem(
+        "quantumPool",
+        JSON.stringify(quantumPool)
     );
-
-loadPool();
+    return value;
+}
