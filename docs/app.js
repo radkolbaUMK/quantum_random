@@ -48,6 +48,20 @@ function getQuantumNumber() {
     return value;
 }
 
+function drawWinner() {
+    const quantum = getQuantumNumber();
+    if (typeof quantum !== "number") {
+        return quantum;
+    }
+    const participants =
+        document.getElementById("participants").value.split("\n").map(v => v.trim()).filter(v => v.length);
+    if (participants.length === 0) {
+        return "Brak uczestników";
+    }
+    const index = quantum % participants.length;
+    return participants[index];
+}
+
 document.addEventListener("DOMContentLoaded", async () => {
     await loadPool();
     document
