@@ -1,0 +1,7 @@
+{
+  "name": "Quantum Random Generator",
+  "short_name": "Quantum RNG",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#0f172a"
+}
