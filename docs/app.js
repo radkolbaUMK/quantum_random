@@ -1,10 +1,13 @@
 let quantumPool = [];
 
 async function loadPool() {
+    console.log("Loading random.json");
     const response = await fetch(
         "random.json?" + Date.now()
     );
     const data = await response.json();
+    console.log("Status:", response.status);
+    console.log("Numbers:", data.numbers?.length);
     const savedTimestamp =
         localStorage.getItem("generated_at");
     if (savedTimestamp === data.generated_at) {
@@ -35,3 +38,15 @@ function getQuantumNumber() {
     );
     return value;
 }
+
+document.addEventListener("DOMContentLoaded", async () => {
+    await loadPool();
+    document
+        .getElementById("drawBtn")
+        .addEventListener("click", () => {
+            console.log("Presenting quantum number");
+            document
+                .getElementById("result")
+                .textContent = getQuantumNumber();
+        });
+});
