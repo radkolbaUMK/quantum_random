@@ -5,11 +5,6 @@ on:
   push:
     branches:
       - main
-  workflow_run:
-    workflows:
-      - Generate Quantum Numbers
-    types:
-      - completed
 
 permissions:
   pages: write
@@ -36,6 +31,10 @@ jobs:
         env:
           IBM_TOKEN: ${{ secrets.IBM_TOKEN }}
         run: |
+          test -f docs/random.json.enc || {
+            echo "Missing docs/random.json.enc. Run Generate Quantum Numbers first."
+            exit 1
+          }
           cp -R docs site
           python generator/encrypt_random.py decrypt docs/random.json.enc site/random.json
           rm site/random.json.enc

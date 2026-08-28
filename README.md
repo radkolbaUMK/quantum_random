@@ -47,6 +47,9 @@ workflow decrypts the file in its temporary build directory, then removes the
 encrypted copy before publishing. The token is never included in the client
 JavaScript or the Pages artifact.
 
+The first deployment requires running `Generate Quantum Numbers` once. Its
+commit of `docs/random.json.enc` then triggers the Pages deployment.
+
 GitHub Pages must be configured to use GitHub Actions as its build and
 deployment source.
 
