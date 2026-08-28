@@ -29,7 +29,8 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install -r generator/requirements.txt
       - run: |
-          python generator/generate_random.py --output docs/random.json
+          python generator/generate_random.py --output /tmp/random.json
+          python generator/encrypt_random.py encrypt /tmp/random.json docs/random.json.enc
         env:
           IBM_TOKEN: ${{ secrets.IBM_TOKEN }}
           IBM_INSTANCE: ${{ secrets.IBM_INSTANCE }}
@@ -37,6 +38,7 @@ jobs:
         run: |
           git config user.name github-actions
           git config user.email github-actions@github.com
-          git add docs/random.json
+          git rm --ignore-unmatch docs/random.json
+          git add docs/random.json.enc
           git commit -m "Quantum poll refresh" || exit 0
           git push

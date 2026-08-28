@@ -39,8 +39,8 @@
                         <div id="numbersPanel" class="tab-panel active">
                             <div class="section-heading"><div><p class="section-label">Tryb 01</p><h2>Losowanie liczby</h2></div><span class="section-icon" aria-hidden="true">#</span></div>
                             <div class="range-grid">
-                                <div class="form-field"><label for="minValue">Od</label><input id="minValue" type="number" value="1" step="1"></div>
-                                <div class="form-field"><label for="maxValue">Do</label><input id="maxValue" type="number" value="100" step="1"></div>
+                                <div class="form-field"><label for="minValue">Od</label><input id="minValue" type="number" value="1" min="1" max="256" step="1"></div>
+                                <div class="form-field"><label for="maxValue">Do</label><input id="maxValue" type="number" value="256" min="1" max="256" step="1"></div>
                             </div>
                             <button id="drawBtn" class="primary-button" type="button"><span>Losuj liczbę</span><span aria-hidden="true">→</span></button>
                         </div>

@@ -26,8 +26,21 @@ jobs:
       name: github-pages
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: generator/requirements.txt
+      - run: python -m pip install -r generator/requirements.txt
+      - name: Decrypt random pool into deployment artifact
+        env:
+          IBM_TOKEN: ${{ secrets.IBM_TOKEN }}
+        run: |
+          cp -R docs site
+          python generator/encrypt_random.py decrypt docs/random.json.enc site/random.json
+          rm site/random.json.enc
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: ./docs
+          path: ./site
       - uses: actions/deploy-pages@v5

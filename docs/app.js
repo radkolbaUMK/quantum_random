@@ -1,5 +1,7 @@
 const STORAGE_KEY = "quantum-random-state-v3";
 const MAX_HISTORY_ITEMS = 20;
+const MIN_DRAW_VALUE = 1;
+const MAX_DRAW_VALUE = 256;
 
 let state = {
     pool: [],
@@ -120,9 +122,11 @@ function drawNumber() {
         !Number.isSafeInteger(min) ||
         !Number.isSafeInteger(max) ||
         !Number.isSafeInteger(range) ||
+        min < MIN_DRAW_VALUE ||
+        max > MAX_DRAW_VALUE ||
         min > max
     ) {
-        showResult("Błędny zakres", "Podaj całkowite wartości, gdzie Od jest mniejsze lub równe Do.");
+        showResult("Błędny zakres", "Podaj całkowite wartości od 1 do 256, gdzie Od jest mniejsze lub równe Do.");
         return;
     }
     const value = takeValue();
