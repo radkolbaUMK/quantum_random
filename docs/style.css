@@ -595,6 +595,21 @@ textarea:focus {
     gap: 30px;
 }
 
+.source-description {
+    max-width: 620px;
+    margin: 12px 0 0;
+    color: var(--text-secondary);
+    line-height: 1.6;
+}
+
+.source-description code {
+    padding: 2px 5px;
+    border-radius: 5px;
+    background: rgba(96, 165, 250, 0.12);
+    color: var(--primary);
+    font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+}
+
 .source-details {
     display: grid;
     grid-template-columns: repeat(3, 1fr);

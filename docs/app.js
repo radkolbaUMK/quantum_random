@@ -1,4 +1,4 @@
-const STORAGE_KEY = "quantum-random-state";
+const STORAGE_KEY = "quantum-random-state-v3";
 const MAX_HISTORY_ITEMS = 20;
 
 let state = {
@@ -45,25 +45,6 @@ function saveState() {
     }));
 }
 
-function shuffle(values) {
-    const shuffled = [...values];
-    for (let index = shuffled.length - 1; index > 0; index -= 1) {
-        const swapIndex = randomUintBelow(index + 1);
-        [shuffled[index], shuffled[swapIndex]] = [shuffled[swapIndex], shuffled[index]];
-    }
-    return shuffled;
-}
-
-function randomUintBelow(limit) {
-    const maximum = 2 ** 32;
-    const acceptedMaximum = maximum - (maximum % limit);
-    const randomValue = new Uint32Array(1);
-    do {
-        crypto.getRandomValues(randomValue);
-    } while (randomValue[0] >= acceptedMaximum);
-    return randomValue[0] % limit;
-}
-
 function updateView() {
     const total = state.metadata?.pool_size || 0;
     $("poolInfo").textContent = `${state.pool.length} z ${total} liczb pozostało`;
@@ -107,22 +88,21 @@ async function loadPool() {
         backend: data.backend || "Nieznany backend",
         pool_size: data.pool_size || data.numbers.length,
     };
-    if (!readSavedState()) state.pool = shuffle(data.numbers);
+    if (!readSavedState()) state.pool = [...data.numbers];
     saveState();
     setStatus("Źródło gotowe", "ready");
     updateView();
 }
 
-function takeUniformIndex(limit) {
-    if (!Number.isSafeInteger(limit) || limit < 1 || limit > 256) {
-        throw new Error("Losowanie obsługuje zakresy od 1 do 256 wartości.");
+function takeValue() {
+    if (!state.pool.length) {
+        showResult("Brak liczb", "Uruchom workflow, aby wygenerować nową pulę.");
+        return null;
     }
-    const acceptedLimit = Math.floor(256 / limit) * limit;
-    while (state.pool.length) {
-        const value = state.pool.pop();
-        if (value < acceptedLimit) return value % limit;
-    }
-    return null;
+    const value = state.pool.pop();
+    saveState();
+    updateView();
+    return value;
 }
 
 function recordHistory(kind, value) {
@@ -145,15 +125,9 @@ function drawNumber() {
         showResult("Błędny zakres", "Podaj całkowite wartości, gdzie Od jest mniejsze lub równe Do.");
         return;
     }
-    let index;
-    try {
-        index = takeUniformIndex(range);
-    } catch (error) {
-        showResult("Błędny zakres", error.message);
-        return;
-    }
-    if (index !== null) {
-        const result = min + index;
+    const value = takeValue();
+    if (value !== null) {
+        const result = min + (value % range);
         recordHistory("Liczba", result);
         showResult(result, "Wylosowano ze źródła kwantowego");
     }
@@ -165,11 +139,9 @@ function drawWinner() {
         showResult("Brak uczestników", "Dodaj co najmniej jedną osobę.");
         return;
     }
-    const index = takeUniformIndex(participants.length);
-    if (index === null) {
-        showResult("Brak liczb", "Uruchom workflow, aby wygenerować nową pulę.");
-        return;
-    }
+    const value = takeValue();
+    if (value === null) return;
+    const index = value % participants.length;
     const winner = participants[index];
     if ($("removeWinner").checked) {
         participants.splice(index, 1);
