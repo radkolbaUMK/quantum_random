@@ -9,9 +9,11 @@ POOL_SIZE = 256
 numbers = []
 
 token = os.environ["IBM_TOKEN"]
+instance = os.environ.get("IBM_INSTANCE", None)
 service = QiskitRuntimeService(
     channel="ibm_quantum_platform",
-    token=token
+    token=token,
+    instance=instance
 )
 backend = service.least_busy(
     simulator=False,

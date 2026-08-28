@@ -23,6 +23,7 @@ jobs:
           python generator/generate_random.py
         env:
           IBM_TOKEN: ${{ secrets.IBM_TOKEN }}
+          IBM_INSTANCE: ${{ secrets.IBM_INSTANCE }}
       - name: Commit changes
         run: |
           git config user.name github-actions
